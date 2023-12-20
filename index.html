@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatroom</title>
+  <script src="https://cdn.scaledrone.com/scaledrone.min.js"></script>
+  <script src="script.js"></script>
+</head>
+<body>
+  <h1>Chatroom</h1>
+  <label for="roomName">Chatroom Name:</label>
+  <input type="text" id="roomName" placeholder="Enter Chatroom Name">
+  <div id="messages"></div>
+  <input type="text" id="inputMessage" placeholder="Type your message">
+  <button id="sendMessage">Send</button>
+</body>
+</html>
+
+<style>
+#chatroom {
+  width: 400px;
+  margin: 0 auto;
+}
+
+#messages {
+  height: 300px;
+  border: 1px solid #000;
+  padding: 10px;
+  overflow-y: scroll;
+}
+
+#inputMessage {
+  width: 300px;
+}
+
+#sendMessage {
+  margin-top: 10px;
+}
+</style>
+
+<script>
+// Initialize Scaledrone
+const scaledrone = new ScaleDrone('Jn7Wau2myMS9fySd');
+
+// Get the elements
+const messageInput = document.getElementById('inputMessage');
+const sendMessageButton = document.getElementById('sendMessage');
+const messagesDiv = document.getElementById('messages');
+const roomNameInput = document.getElementById('roomName');
+
+// Connect to Scaledrone
+scaledrone.on('open', (error, room) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('Connected to Scaledrone');
+  }
+});
+
+// Add message to chat
+function addMessage(message) {
+  const messageElement = document.createElement('p');
+  messageElement.textContent = message;
+  messagesDiv.appendChild(messageElement);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// Send message
+sendMessageButton.addEventListener('click', () => {
+  const message = messageInput.value;
+  const roomName = roomNameInput.value;
+  if (message !== '') {
+    scaledrone.publish({
+      room: roomName,
+      message: message,
+    });
+    messageInput.value = '';
+  }
+});
+
+// Listen for messages
+scaledrone.on('message', (message) => {
+  addMessage(message.data);
+</script>
